@@ -1,0 +1,192 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} 分類瀏覽/編輯 {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>分類新增/編輯</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">分類新增/編輯</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <!-- /.card-header -->
+            <div class="card-body">
+              <button type="button" onclick="add_row()"
+                        class="btn btn-primary"><i class="fas fa-plus-square"> 新增</i></button>
+                        <br><br> 
+              <table id="category" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>名稱</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for result in results %}
+                  <tr>
+                    <td>{{ result.id }}</td>
+                    <td>{{ result.name }}</td>
+                    <td class="text-right">
+                      <button type="button" onclick="update_row({{ result.id }})"
+                        class="btn btn-success"><i class="fas fa-edit"></i></button>
+                      <button type="button" onclick="delete_row({{ result.id }})"
+                        class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                  </tfoot>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+
+<div class="modal fade" id="show_update" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true">
+  <form method="post" action="/update-category-action">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">更新分類</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="col-md-12">
+            <!-- general form elements -->
+            <div class="card card-primary">
+              
+              <!-- /.card-header -->
+              <!-- form start -->
+
+              <div class="card-body">
+                <div class="form-group">
+                  <label for="question_type">分類名稱 <span style="color: red">*</span></label>
+                  <input class="form-control" name="name" id="name" >
+                </div>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input type="hidden" name="id" id="id">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">關 閉</button>
+          <button type="submit" class="btn btn-primary">儲 存</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+
+<!-- page script -->
+<script>
+  $(function () {
+
+    $("#category").DataTable({
+      "responsive": true,
+      "autoWidth": false,
+      "language": {
+        url: "/static/assets/datatable/zh_TW.json"
+      },
+      'order': [
+        [0, 'desc']
+      ],
+      "columns": [{
+          "width": "5%"
+        },
+        {
+          "width": "70%"
+        },
+        {
+          "width": "25%"
+        }
+      ],
+      "columnDefs": [{
+        "orderable": false,
+        "targets": [2]
+      }]
+    });
+
+  });
+
+
+  function update_row(id) {
+    
+    $.post('/update-category', {
+      "id": id
+    }, function(data){
+      // console.log(data)
+      $('#id').val(data.id)
+      $('#name').val(data.name)
+      
+      $('#show_update').modal();
+    })
+  }
+
+  function add_row(){
+    $('#id').val('')
+    $('#name').val('')
+    
+    $('#show_update').modal()
+  }
+
+  function delete_row(id) {
+    if (confirm('確定要刪除嗎？')) {
+      $.post('/delete-category', {
+          'id': id
+        },
+        function (data) {
+          location.reload();
+        })
+    }
+  }
+
+</script>
+
+{% endblock javascripts %}

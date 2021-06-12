@@ -1,0 +1,26 @@
+{
+    "remotePath": "/home/ubuntu/source/blog-admin",
+    "host": "152.70.109.169",
+    "username": "ubuntu",
+    "port": 22,
+    "secure": false,
+    "protocol": "sftp",
+    "uploadOnSave": true,
+    "passive": false,
+    "debug": false,
+    "privateKeyPath": "c:\\Users\\heren\\.ssh\\id_rsa",
+    "passphrase": null,
+    "agent": null,
+    "allow": [],
+    "ignore": [
+        "\\.vscode",
+        "\\.git",
+        "\\.DS_Store"
+    ],
+    "generatedFiles": {
+        "extensionsToInclude": [
+            ""
+        ],
+        "path": ""
+    }
+}
