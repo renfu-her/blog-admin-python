@@ -1,0 +1,141 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} 文章瀏覽/編輯 {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+    <link rel="stylesheet" href="/static/assets/css/simplemde.min.css">
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>文章新增</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">文章新增</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div id="show_update">
+                    <form method="post" action="/update-posts-action">
+                        <div class="" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">新增文章</h5>
+
+                                </div>
+                                <div class="modal-body">
+                                    <div class="col-md-12">
+                                        <!-- general form elements -->
+                                        <div class="card card-primary">
+
+                                            <!-- /.card-header -->
+                                            <!-- form start -->
+
+                                            <div class="card-body">
+                                                <div class="form-group">
+                                                    <label for="question_type">名稱 <span
+                                                            style="color: red">*</span></label>
+                                                    <input class="form-control" name="title" id="title">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="question_type">Slug 名稱 <span style="color: red">*</span></label>
+                                                    <input class="form-control" name="slug" id="slug">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="question_type">分類名稱 <span
+                                                            style="color: red">*</span></label>
+                                                    <select class="form-control" name="category_id" id="category_id">
+                                                        {% for category in categories %}
+                                                            <option value="{{ category.id }}">{{ category.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="question_type">內容<span
+                                                            style="color: red">*</span></label>
+                                                    <textarea class="form-control" name="content" id="content" cols="30"
+                                                              rows="10"></textarea>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="question_type">圖片 <span
+                                                            style="color: red">*</span></label>
+                                                    <input class="form-control" name="image" id="image">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="question_type">瀏覽狀態 <span
+                                                            style="color: red">*</span></label>
+                                                    <input class="form-control" type="number" name="views" id="views">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="question_type">公佈狀態 <span
+                                                            style="color: red">*</span></label>
+                                                    <select class="form-control" name="published" id="published">
+                                                        <option value="0" selected>未發佈</option>
+                                                        <option value="1">已發佈</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <input type="hidden" name="id" id="id">
+                                    <a type="button" href="/post-browse" class="btn btn-secondary" data-dismiss="modal">取
+                                        消</a>
+                                    <button type="submit" class="btn btn-primary">儲 存</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+    <script src="/static/assets/js/simplemde.min.js"></script>
+
+    <!-- page script -->
+    <script>
+        $(function () {
+
+            $('#title').on('change', function () {
+                $('#slug').val(slugify($(this).val()))
+            })
+
+        });
+
+        let simplemde = new SimpleMDE({element: $("#content")[0], autofocus: true})
+
+        function slugify(str) {
+            str = str.replace(/\s+/g, '-') // replace spaces with dashes
+            str = encodeURIComponent(str) // encode (it encodes chinese characters)
+            return str
+        }
+
+
+    </script>
+
+{% endblock javascripts %}

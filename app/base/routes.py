@@ -1,7 +1,4 @@
 # -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
 
 from flask import jsonify, render_template, redirect, request, url_for
 from flask_login import (
@@ -22,7 +19,7 @@ from app.base.util import verify_pass
 def route_default():
     return redirect(url_for('base_blueprint.login'))
 
-## Login & Registration
+# Login & Registration
 
 @blueprint.route('/login', methods=['GET', 'POST'])
 def login():
@@ -37,8 +34,7 @@ def login():
         user = User.query.filter_by(username=username).first()
         
         # Check the password
-        if user and verify_pass( password, user.password):
-
+        if user and verify_pass(password, user.password):
             login_user(user)
             return redirect(url_for('base_blueprint.route_default'))
 
@@ -46,7 +42,7 @@ def login():
         return render_template( 'accounts/login.html', msg='Wrong user or password', form=login_form)
 
     if not current_user.is_authenticated:
-        return render_template( 'accounts/login.html',
+        return render_template('accounts/login.html',
                                 form=login_form)
     return redirect(url_for('home_blueprint.index'))
 
@@ -95,24 +91,46 @@ def logout():
 
 
 # 文章
-@blueprint.route('/posts-edit', methods=["POST", "GET"])
-def posts():
+@blueprint.route('/posts-browse', methods=["POST", "GET"])
+def posts_browse():
     if not current_user.is_authenticated:
         return 'Forbidden', 403
     results = db.session.query(Post, Category).filter(Post.category_id == Category.id).order_by(Post.id.desc()).all()
     categories = Category.query.all()
-    return render_template('posts/posts-edit.html', 
-                            results = results, 
-                            categories = categories,
+    return render_template('posts/browse.html',
+                            results=results,
+                            categories=categories,
+                            segment='posts-browse')
+
+@blueprint.route('/posts-edit/<post_id>')
+def posts_edit(post_id):
+    if not current_user.is_authenticated:
+        return 'Forbidden', 403
+    # post_id = request.form.get('id')
+    results = db.session.query(Post).filter_by(id=post_id).first()
+    categories = Category.query.all()
+    return render_template('posts/edit.html',
+                            post_id=post_id,
+                            results=results,
+                            categories=categories,
                             segment='posts-edit')
 
+@blueprint.route('/posts-add')
+def posts_add():
+    if not current_user.is_authenticated:
+        return 'Forbidden', 403
+    # post_id = request.form.get('id')
+    categories = Category.query.all()
+    return render_template('posts/add.html',
+                            categories=categories,
+                            segment='posts-add')
 
 @blueprint.route('/delete-posts',  methods=["POST", "GET"])
 def delete_type():
     if not current_user.is_authenticated:
         return 'Forbidden', 403
     post_id = request.form.get('id')
-    query = Post.query.filter_by(id = post_id).first()
+    query = Post.query.filter_by(id=post_id).first()
     db.session.delete(query)
     db.session.commit()
     return '', 200  
@@ -173,7 +191,7 @@ def update_posts_action():
         q.slug = slug
         db.session.commit()
     
-    return redirect('/posts-edit')
+    return redirect('/posts-browse')
 
 # 分類
 @blueprint.route('/category-edit', methods=["POST", "GET"])

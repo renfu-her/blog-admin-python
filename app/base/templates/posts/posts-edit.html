@@ -33,69 +33,6 @@
     </div><!-- /.container-fluid -->
   </section>
 
-  <!-- Main content -->
-  <section class="content">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-12">
-          <div class="card">
-            <!-- /.card-header -->
-            <div class="card-body">
-              <button type="button" onclick="add_row()"
-                        class="btn btn-primary"><i class="fas fa-plus-square"> 新增</i></button>
-                        <br><br> 
-              <table id="posts" class="table table-bordered table-striped">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>分類名稱</th>
-                    <th>名稱</th>
-                    <th>圖片</th>
-                    <th>觀看次數</th>
-                    <th>公佈狀態</th>
-                    <th>操作</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for result in results %}
-                  <tr>
-                    <td>{{ result.Post.__dict__.get('id') }}</td>
-                    <td>{{ result.Category.__dict__.get('name') }}</td>
-                    <td>{{ result.Post.__dict__.get('title') }}</td>
-                    <td><img src="{{ result.Post.__dict__.get('image') }}" style="width: 150px"></td>
-                    <td>{{ result.Post.__dict__.get('views') }}</td>
-                    <td>
-                      {% if result.Post.__dict__.get('published') == 1 %}
-                        <span style="color: blue">已發佈</span>
-                      {% else %}
-                      <span style="color: red">未發佈</span>
-                      {% endif %}
-                    </td>
-                    <td class="text-right">
-                      
-                      <button type="button" onclick="update_row({{ result.Post.__dict__.get('id') }})"
-                        class="btn btn-success"><i class="fas fa-edit"></i></button>
-                      <button type="button" onclick="delete_row({{ result.Post.__dict__.get('id') }})"
-                        class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
-                    </td>
-                  </tr>
-                  {% endfor %}
-
-                  </tfoot>
-              </table>
-            </div>
-            <!-- /.card-body -->
-          </div>
-          <!-- /.card -->
-        </div>
-        <!-- /.col -->
-      </div>
-      <!-- /.row -->
-    </div>
-    <!-- /.container-fluid -->
-  </section>
-  <!-- /.content -->
-</div>
 
 <div class="modal fade" id="show_update" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
   aria-hidden="true">
@@ -180,43 +117,6 @@
     $('#title').on('change', function(){
         $('#slug').val(slugify($(this).val()))
     })
-
-    $("#posts").DataTable({
-      "responsive": true,
-      "autoWidth": false,
-      "language": {
-        url: "/static/assets/datatable/zh_TW.json"
-      },
-      'order': [
-        [0, 'desc']
-      ],
-      "columns": [{
-          "width": "5%"
-        },
-        {
-          "width": "11%"
-        },
-        {
-          "width": "20%"
-        },
-        {
-          "width": "25%"
-        },
-        {
-          "width": "12%"
-        },
-        {
-          "width": "12%"
-        },
-        {
-          "width": "15%"
-        }
-      ],
-      "columnDefs": [{
-        "orderable": false,
-        "targets": [4]
-      }]
-    });
 
   });
 

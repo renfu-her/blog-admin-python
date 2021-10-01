@@ -1,0 +1,215 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} 文章瀏覽/編輯 {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+<link rel="stylesheet" href="/static/assets/css/simplemde.min.css">
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>文章新增/編輯</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">文章新增/編輯</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <!-- /.card-header -->
+            <div class="card-body">
+              <a type="button" href="/posts-add"
+                        class="btn btn-primary"><i class="fas fa-plus-square"> 新增</i></a>
+                        <br><br> 
+              <table id="posts" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>分類名稱</th>
+                    <th>名稱</th>
+                    <th>圖片</th>
+                    <th>觀看次數</th>
+                    <th>公佈狀態</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for result in results %}
+                  <tr>
+                    <td>{{ result.Post.__dict__.get('id') }}</td>
+                    <td>{{ result.Category.__dict__.get('name') }}</td>
+                    <td>{{ result.Post.__dict__.get('title') }}</td>
+                    <td><img src="{{ result.Post.__dict__.get('image') }}" style="width: 150px"></td>
+                    <td>{{ result.Post.__dict__.get('views') }}</td>
+                    <td>
+                      {% if result.Post.__dict__.get('published') == 1 %}
+                        <span style="color: blue">已發佈</span>
+                      {% else %}
+                      <span style="color: red">未發佈</span>
+                      {% endif %}
+                    </td>
+                    <td class="text-right">
+                      
+                      <a type="button" href="/posts-edit/{{ result.Post.__dict__.get('id') }}"
+                        class="btn btn-success"><i class="fas fa-edit"></i></a>
+                      <button type="button" onclick="delete_row({{ result.Post.__dict__.get('id') }})"
+                        class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                  </tr>
+                  {% endfor %}
+
+                  </tfoot>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script src="/static/assets/js/simplemde.min.js"></script>
+
+<!-- page script -->
+<script>
+  $(function () {
+
+    $('#title').on('change', function(){
+        $('#slug').val(slugify($(this).val()))
+    })
+
+    $("#posts").DataTable({
+      "responsive": true,
+      "autoWidth": false,
+      "language": {
+        url: "/static/assets/datatable/zh_TW.json"
+      },
+      'order': [
+        [0, 'desc']
+      ],
+      "columns": [{
+          "width": "5%"
+        },
+        {
+          "width": "11%"
+        },
+        {
+          "width": "20%"
+        },
+        {
+          "width": "25%"
+        },
+        {
+          "width": "12%"
+        },
+        {
+          "width": "12%"
+        },
+        {
+          "width": "15%"
+        }
+      ],
+      "columnDefs": [{
+        "orderable": false,
+        "targets": [4]
+      }]
+    });
+
+  });
+
+
+  let simplemde = new SimpleMDE({ element: $("#content")[0], autofocus: true })
+
+  function update_row(id) {
+    
+    $.post('/update-posts', {
+      "id": id
+    }, function(data){
+      // console.log(data)
+      $('#id').val(data.id)
+      $('#category_id').val(data.category_id)
+      $('#title').val(data.title)
+      $('#published').val(data.published)
+      $('#views').val(data.views)
+      $('#slug').val(data.slug)
+      image = data.image
+      if (data.image == 'None') {
+        image = ''
+      }
+      $('#image').val(image)
+
+      simplemde.value('')
+      simplemde.value(data.content)
+      
+      $('#show_update').modal();
+    })
+  }
+
+  function slugify(str){
+    str = str.replace(/\s+/g,'-') // replace spaces with dashes
+    str = encodeURIComponent(str) // encode (it encodes chinese characters)
+    return str
+  }
+
+  function add_row(){
+    $('#id').val('')
+    $('#category_id').val(1)
+    $('#title').val('')
+    $('#content').val('')
+    $('#image').val('')
+    $('#slug').val('')
+    $('#published').val('')
+
+    simplemde.value('')
+
+    $('#show_update').modal()
+  }
+
+  function delete_row(id) {
+    if (confirm('確定要刪除嗎？')) {
+      $.post('/delete-posts', {
+          'id': id
+        },
+        function (data) {
+          location.reload();
+        })
+    }
+  }
+
+</script>
+
+{% endblock javascripts %}

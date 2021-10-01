@@ -3,7 +3,7 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="419cde7b-f7f6-4706-bfb3-0aa216ca5abd" name="blog-admin" url="https://blog-admin.dev-maker.cc">
-        <fileTransfer rootFolder="/home/ubuntu/source/blog-admin" accessType="SFTP" host="152.70.109.169" port="22" sshConfigId="314a274f-eee1-4220-b255-e92270df5c43" sshConfig="ubuntu@152.70.109.169:22 key" keyPair="true">
+        <fileTransfer rootFolder="/home/zivhsiao/source/blog-admin" accessType="SFTP" host="139.162.63.136" port="22" sshConfigId="314a274f-eee1-4220-b255-e92270df5c43" sshConfig="zivhsiao@139.162.63.136:22 key" keyPair="true">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>
